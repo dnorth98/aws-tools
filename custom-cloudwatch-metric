@@ -1,0 +1,29 @@
+#!/usr/bin/python2.6
+
+import os
+import boto
+import boto.ec2.cloudwatch
+import boto.utils
+import datetime
+
+processname = 'myproc'
+timestamp = ''
+
+instance_id = boto.utils.get_instance_metadata()['instance-id']
+region = boto.utils.get_instance_metadata()['placement']['availability-zone'][0:-1]
+
+connection = boto.ec2.cloudwatch.connect_to_region(region)
+
+str_metricname = 'NBTRunningTransfers'
+str_namespace = 'NBT/Instances'
+str_unit = 'Count'
+transfercount = 0
+
+for line in os.popen("ps xa"):
+   fields = line.split()
+   pid = fields[0]
+   process = fields[4]
+   if process.find(processname) > 0:
+      transfercount += 1
+
+connection.put_metric_data(str_namespace, str_metricname, transfercount, timestamp, str_unit, {'InstanceID': instance_id})
