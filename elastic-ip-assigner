@@ -51,9 +51,9 @@ if ( (not elasticIP) and (proceedWithAssignment) ):
         myLog("Failed to provision new elastic IP: %s" % e)
 
     if (newElasticIP):
-        myLog("Provisioned new elastic IP: %s" % newElasticIP)
-        elasticIP = newElasticIP
-
+        elasticIP = newElasticIP.public_ip
+        myLog("Provisioned new elastic IP: %s" % elasticIP)
+        
 # Now associate the address with this instance
 if (proceedWithAssignment):
     myLog("Assigning elastic IP: %s" % elasticIP)
